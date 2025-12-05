@@ -21,7 +21,7 @@
       <img src="F1.png" alt="Narxoz University, Алматы">
     </div>
 
-    <!-- Заголовок поверх фото / под фото (в зависимости от CSS) -->
+    <!-- Заголовок -->
     <section class="uni-hero">
       <div class="uni-hero-overlay">
         <h1>Narxoz University</h1>
@@ -58,8 +58,8 @@
         <div class="tour-frame">
           <iframe
             src="https://mir3d.kz/Narxoz_VR/"
+            height="420"
             width="100%"
-            height="260"
             style="border:0;"
             loading="lazy"
             allowfullscreen
@@ -68,7 +68,7 @@
       </aside>
     </section>
 
-    <!-- Тематические блоки (только нужные 3) -->
+    <!-- Тематические блоки -->
     <section class="uni-grid">
       <div class="uni-card">
         <div class="uni-card-number">1</div>
@@ -123,8 +123,9 @@
         <button class="btn-primary" id="narxozAskBtn">Спросить AI</button>
       </div>
       <div class="ai-hint">
-        Сейчас AI отвечает на основе общих знаний. В будущем сюда добавим
-        реальные данные Narxoz University и внутренний DataHub.
+        Сейчас AI отвечает на основе базы фактов о Narxoz University,
+        развернутой на backend-сервисе
+        <strong>ai-uniguide.onrender.com</strong>.
       </div>
       <div class="ai-result" id="narxozResult"></div>
     </section>
@@ -135,17 +136,20 @@
     const narxozBtn = document.getElementById("narxozAskBtn");
     const narxozResult = document.getElementById("narxozResult");
 
+    // Базовый URL твоего backend на Render
+    const API_BASE = "https://ai-uniguide.onrender.com";
+
     async function askNarxoz() {
       const q = (narxozInput.value || "").trim();
       if (!q) {
-        narxozResult.textContent = "Сначала введи вопрос ";
+        narxozResult.textContent = "Сначала введи вопрос";
         return;
       }
 
       narxozResult.textContent = "AI думает...";
 
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/ask", {
+        const res = await fetch(`${API_BASE}/api/ask`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
