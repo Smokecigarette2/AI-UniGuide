@@ -7,16 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import httpx
 
-# ---------- НАСТРОЙКА GEMINI ЧЕРЕЗ HTTP ----------
+# ---------- НАСТРОЙКА OPENAI ЧЕРЕЗ HTTP ----------
 
-# пока храним ключ прямо в коде (репозиторий держи приватным)
-GEMINI_API_KEY = "KEY"
-
-# ВАЖНО: используем v1, не v1beta
-GEMINI_URL = (
-    "https://generativelanguage.googleapis.com/v1/"
-    "models/gemini-1.5-flash:generateContent"
-)
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_MODEL = "gpt-4.1-mini"        # можно любой актуальный текстовый
+OPENAI_URL = "https://api.openai.com/v1/responses"
 
 # ---------- ЛОКАЛЬНАЯ БАЗА ПО NARXOZ ----------
 
@@ -102,10 +97,10 @@ async def root():
 
 @app.post("/api/ask", response_model=AskResponse)
 async def ask_ai(req: AskRequest):
-    # Если вопрос про Narxoz — подмешиваем локальную базу фактов
+    # 1) Собираем промпт
     if req.universityId == "narxoz":
         context = "\n".join(f"• {fact}" for fact in NARXOZ_FACTS)
-        prompt = (
+        instructions = (
             "Ты — AI-гид по Narxoz University в Алматы. "
             "Отвечай по-русски, опираясь только на факты из базы ниже. "
             "Если точного ответа нет, честно скажи, что такой информации нет в базе "
@@ -114,43 +109,60 @@ async def ask_ai(req: AskRequest):
             f"Вопрос пользователя: {req.question}"
         )
     else:
-        # Общий помощник по вузам
-        prompt = (
+        instructions = (
             "Ты — AI-помощник по выбору университетов Казахстана. "
             "Отвечай кратко и по делу, максимум 4–5 предложений.\n\n"
             f"Вопрос пользователя: {req.question}"
         )
 
+    # 2) Готовим запрос к Responses API
     payload = {
-        "contents": [
-            {
-                "parts": [
-                    {"text": prompt}
-                ]
-            }
-        ]
+        "model": OPENAI_MODEL,
+        "input": instructions,
+        "max_output_tokens": 400,
     }
 
     headers = {
-        "x-goog-api-key": GEMINI_API_KEY,
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
         "Content-Type": "application/json",
     }
 
+    # 3) Делаем запрос к OpenAI
     try:
-        async with httpx.AsyncClient(timeout=20.0) as client:
+        if not OPENAI_API_KEY:
+            raise RuntimeError("OPENAI_API_KEY не найден в переменных окружения")
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(
-                GEMINI_URL,
+                OPENAI_URL,
                 headers=headers,
                 json=payload,
             )
 
         resp.raise_for_status()
         data = resp.json()
-        answer = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+        # 4) Аккуратно достаём текст из output
+        answer_parts = []
+        for item in data.get("output", []):
+            if item.get("type") == "message":
+                for c in item.get("content", []):
+                    if c.get("type") == "output_text":
+                        answer_parts.append(c.get("text", ""))
+
+        if not answer_parts:
+            # fallback на самый первый кусок, если структура вдруг другая
+            answer = (
+                data.get("output", [{}])[0]
+                    .get("content", [{}])[0]
+                    .get("text", "")
+                    .strip()
+            )
+        else:
+            answer = "".join(answer_parts).strip()
 
     except Exception as e:
-        # Очень полезно видеть, ЧТО именно пошло не так
-        print("Gemini error:", repr(e))
+        print("OpenAI error:", repr(e))
         answer = "Не получилось получить ответ от AI."
 
     return AskResponse(answer=answer)
