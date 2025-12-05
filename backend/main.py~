@@ -8,7 +8,7 @@ import httpx
 # ---------- НАСТРОЙКА GEMINI ЧЕРЕЗ HTTP ----------
 
 
-GEMINI_API_KEY = "KEY"
+GEMINI_API_KEY = "AIzaSyD0EtffPNd-z_G3cCzqdgUi_bO1qGkPjIY"
 
 GEMINI_URL = (
     "https://generativelanguage.googleapis.com/v1beta/"

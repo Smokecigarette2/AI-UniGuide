@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI-UniGuide – DataHub вузов РК</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a href="index.html" class="logo-link">
+        <span class="logo">AI-UniGuide</span>
+      </a>
+      <div class="tagline">DataHub вузов РК с AI-помощником</div>
+    </header>
+
+    <!-- HERO / СЛАЙДЕР ВУЗОВ -->
+    <section class="hero">
+      <button class="hero-arrow" id="prevUni">‹</button>
+
+      <div class="hero-card">
+        <div>
+          <div class="hero-title" id="heroName">KIMEP</div>
+          <div class="hero-meta" id="heroCity">Алматы · частный университет</div>
+          <div class="hero-desc" id="heroDesc">
+            Бизнес, экономика, международные отношения. Программы на английском языке,
+            акцент на прикладном образовании.
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button class="btn-primary" id="openUniBtn">
+            Перейти к вузу (MVP)
+          </button>
+          <button class="btn-ghost" id="compareBtn">
+            Сравнить с другим вузом
+          </button>
+        </div>
+      </div>
+
+      <button class="hero-arrow" id="nextUni">›</button>
+    </section>
+
+    <!-- ПОИСК / AI -->
+    <section class="search-block">
+      <div class="search-label" id="searchLabel">
+        Спроси AI о выборе вуза или различиях между ними
+      </div>
+      <div class="search-row">
+        <input
+          id="searchInput"
+          class="search-input"
+          type="text"
+          placeholder="Например: Хочу учиться на IT в Алматы на гранте"
+        />
+        <button class="btn-primary" id="searchBtn">Спросить AI</button>
+      </div>
+      <div class="ai-hint">
+        В MVP мы только формируем вопрос и показываем, что отправим на backend.
+        Позже здесь будет реальный ответ от AI-модели в облаке.
+      </div>
+      <div class="ai-result" id="aiResult"></div>
+    </section>
+
+    <!-- НИЖНИЙ БЛОК: ПРИВЕТСТВИЕ + НОВОСТИ -->
+    <section class="bottom-row">
+      <div class="welcome">
+        <h2>Приветствуем в DataHub вузов РК!</h2>
+        <p>
+          AI-UniGuide — это прототип единого каталога университетов Казахстана
+          с интеллектуальным помощником. Наша цель — упростить выбор вуза и
+          программы для абитуриентов и студентов.
+        </p>
+        <p>В рамках MVP мы показываем, как может работать:</p>
+        <ul>
+          <li>каталог вузов с ключевой информацией;</li>
+          <li>AI-поиск по данным о программах и условиях поступления;</li>
+          <li>функция сравнения вузов на основе их характеристик;</li>
+          <li>переход к “странице вуза” с более подробным AI-гидом.</li>
+        </ul>
+      </div>
+
+      <aside class="news">
+        <h2>Новости</h2>
+
+        <div class="news-item">
+          <div class="news-title">
+            Определены проходные баллы ЕНТ для поступления в 2026 году
+          </div>
+          <div class="news-date">13 ноября 2025</div>
+        </div>
+
+        <div class="news-item">
+          <div class="news-title">
+            Казахстан и зарубежные вузы запускают новые обменные программы
+          </div>
+          <div class="news-date">5 ноября 2025</div>
+        </div>
+
+        <div class="news-item">
+          <div class="news-title">
+            Обновлены требования к грантам на IT-специальности
+          </div>
+          <div class="news-date">28 октября 2025</div>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    // --- ДАННЫЕ ПО ВУЗАМ (пока локальные, без БД) ---
+    const universities = [
+      {
+        id: "kimep",
+        name: "KIMEP",
+        city: "Алматы · частный университет",
+        desc:
+          "Бизнес, экономика, международные отношения. Программы на английском языке, акцент на прикладном образовании."
+      },
+      {
+        id: "narxoz",
+        name: "NARXOZ",
+        city: "Алматы · профильный по финансам и бизнесу",
+        desc:
+          "Экономика, финансы, бухгалтерский учет, государственное управление. Сильный фокус на прикладных кейсах."
+      }
+    ];
+
+    let currentIndex = 0;
+
+    const heroName = document.getElementById("heroName");
+    const heroCity = document.getElementById("heroCity");
+    const heroDesc = document.getElementById("heroDesc");
+    const prevBtn = document.getElementById("prevUni");
+    const nextBtn = document.getElementById("nextUni");
+    const compareBtn = document.getElementById("compareBtn");
+    const openUniBtn = document.getElementById("openUniBtn");
+
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const aiResult = document.getElementById("aiResult");
+
+    function renderUni(index) {
+      const uni = universities[index];
+      heroName.textContent = uni.name;
+      heroCity.textContent = uni.city;
+      heroDesc.textContent = uni.desc;
+
+      searchInput.placeholder =
+        "Спроси AI про " +
+        uni.name +
+        " или сравнение с другим вузом (например: чем " +
+        uni.name +
+        " отличается от второго вуза?)";
+    }
+
+    prevBtn.addEventListener("click", () => {
+      currentIndex = (currentIndex - 1 + universities.length) % universities.length;
+      renderUni(currentIndex);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % universities.length;
+      renderUni(currentIndex);
+    });
+
+    compareBtn.addEventListener("click", async () => {
+      const other =
+        universities.length > 1
+          ? universities[(currentIndex + 1) % universities.length].name
+          : "другим вузом";
+
+      const question =
+        "Сравни, пожалуйста, " +
+        universities[currentIndex].name +
+        " и " +
+        other +
+        " по программам, стоимости и возможностям для студентов.";
+
+      await sendToAI(question);
+    });
+
+    openUniBtn.addEventListener("click", () => {
+      aiResult.textContent =
+        "Здесь в будущем будет переход на страницу вуза " +
+        universities[currentIndex].name +
+        " с подробным AI-гидом.";
+    });
+
+    // --- КНОПКА "СПРОСИТЬ AI" ---
+    searchBtn.addEventListener("click", async () => {
+      const userText = searchInput.value.trim();
+      const uni = universities[currentIndex];
+
+      const finalQuestion =
+        userText ||
+        "Подскажи, чем университет " +
+          uni.name +
+          " подходит абитуриенту и как он отличается от других вузов в каталоге.";
+
+      await sendToAI(finalQuestion, uni.id);
+    });
+
+    // --- ФУНКЦИЯ ОТПРАВКИ НА БЕКЕНД ---
+    async function sendToAI(question, universityId) {
+      aiResult.textContent = "AI думает...";
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question: question,
+            universityId: universityId || null
+          })
+        });
+
+        if (!res.ok) {
+          aiResult.textContent = "Ошибка сервера: " + res.status;
+          return;
+        }
+
+        const data = await res.json();
+        aiResult.textContent = data.answer || "AI не ответил.";
+      } catch (err) {
+        console.error(err);
+        aiResult.textContent = "Не удалось связаться с backend.";
+      }
+    }
+
+    // начальный рендер
+    renderUni(currentIndex);
+  </script>
+</body>
+</html>

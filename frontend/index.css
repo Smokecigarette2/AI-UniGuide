@@ -1,0 +1,278 @@
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+  display: flex;
+  justify-content: center;
+}
+
+.page {
+  width: 100%;
+  max-width: 1100px;
+  padding: 24px;
+}
+
+header {
+  margin-bottom: 16px;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.06em;
+}
+
+.tagline {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}
+
+.logo-link:hover .logo {
+  opacity: 0.9;
+}
+
+/* ---------- HERO / СЛАЙДЕР ---------- */
+
+.hero {
+  margin-top: 20px;
+  padding: 20px;
+  background: #111827;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hero-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  background: #1f2937;
+  color: #e5e7eb;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.15s ease;
+}
+
+.hero-arrow:hover {
+  background: #374151;
+  transform: translateY(-1px);
+}
+
+.hero-card {
+  flex: 1;
+  background: #020617;
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid #1f2937;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hero-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.hero-meta {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.hero-desc {
+  font-size: 14px;
+  color: #d1d5db;
+  margin-bottom: 10px;
+}
+
+.hero-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 18px;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  border-radius: 999px;
+  border: 1px solid #374151;
+  background: transparent;
+  color: #e5e7eb;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.btn-ghost:hover {
+  background: #111827;
+}
+
+/* ---------- ПОИСК / AI ---------- */
+
+.search-block {
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: #020617;
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search-label {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.search-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  border-radius: 999px;
+  border: 1px solid #374151;
+  background: #020617;
+  color: #e5e7eb;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.search-input::placeholder {
+  color: #6b7280;
+}
+
+.ai-hint {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.ai-result {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #d1d5db;
+  min-height: 18px;
+}
+
+/* ---------- НИЖНИЙ БЛОК: ПРИВЕТСТВИЕ + НОВОСТИ ---------- */
+
+.bottom-row {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+  gap: 18px;
+}
+
+.welcome {
+  background: #111827;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.welcome h2 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+}
+
+.welcome p {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  color: #d1d5db;
+}
+
+.welcome ul {
+  margin: 8px 0 0 18px;
+  padding: 0;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.news {
+  background: #111827;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.news h2 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.news-item {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #1f2937;
+}
+
+.news-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.news-title {
+  font-size: 13px;
+  color: #e5e7eb;
+}
+
+.news-date {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+@media (max-width: 800px) {
+  .bottom-row {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    flex-direction: column;
+  }
+
+  .hero-arrow {
+    order: -1;
+  }
+}
