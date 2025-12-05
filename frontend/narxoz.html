@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Narxoz University – AI-UniGuide</title>
+  <!-- Подключаем те же общие стили -->
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <div class="page">
+    <!-- Хедер такой же, как на главной -->
+    <header>
+      <a href="index.html" class="logo-link">
+        <span class="logo">AI-UniGuide</span>
+      </a>
+      <div class="tagline">DataHub вузов РК с AI-помощником</div>
+    </header>
+
+    <!-- Большая фотография кампуса -->
+    <div class="uni-photo-wrapper">
+      <img src="F1.png" alt="Narxoz University, Алматы">
+    </div>
+
+    <!-- Заголовок поверх фото / под фото (в зависимости от CSS) -->
+    <section class="uni-hero">
+      <div class="uni-hero-overlay">
+        <h1>Narxoz University</h1>
+        <p>Алматы · частный университет · основан в 1963 году</p>
+      </div>
+    </section>
+
+    <!-- Основной текст + 3D-тур -->
+    <section class="uni-main">
+      <div class="uni-main-left">
+        <h2>О университете</h2>
+        <p>
+          Narxoz University — один из ведущих вузов Казахстана и Центральной Азии.
+          Университет работает как некоммерческое частное учреждение и готовит
+          специалистов в области экономики, бизнеса, права, управления,
+          цифровых технологий и социальных наук.
+        </p>
+        <p>
+          Обучение ведётся на трёх языках — английском, казахском и русском.
+          Университет предлагает программы бакалавриата, магистратуры и
+          докторантуры, а также активно развивает научные исследования
+          и партнёрства с индустрией.
+        </p>
+        <p>
+          Нархоз участвует в международных рейтингах, программах академической
+          мобильности и совместных образовательных проектах. Многие программы
+          занимают лидирующие позиции по оценке Национальной палаты
+          предпринимателей «Атамекен».
+        </p>
+      </div>
+
+      <aside class="uni-main-right">
+        <h3>3D-тур по кампусу</h3>
+        <div class="tour-frame">
+          <iframe
+            src="https://mir3d.kz/Narxoz_VR/"
+            width="100%"
+            height="260"
+            style="border:0;"
+            loading="lazy"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Тематические блоки (только нужные 3) -->
+    <section class="uni-grid">
+      <div class="uni-card">
+        <div class="uni-card-number">1</div>
+        <h3>Академические программы</h3>
+        <p>
+          Направления по бизнесу, экономике, финансам, праву, госуправлению,
+          цифровым технологиям и социальным наукам. Программы бакалавриата,
+          магистратуры и PhD с обучением на английском, казахском и русском
+          языках.
+        </p>
+      </div>
+
+      <div class="uni-card">
+        <div class="uni-card-number">2</div>
+        <h3>Приём и поступление</h3>
+        <p>
+          Для поступления на госгрант в Narxoz обычно требуется не менее
+          <strong>100 баллов ЕНТ</strong> для большинства программ, от
+          <strong>90 баллов</strong> — для «Право», «Политология» и
+          «Международные отношения», и от <strong>80 баллов</strong> — для
+          «Социальная работа» и смежных направлений. На платное обучение
+          достаточно <strong>70 баллов</strong>, а в колледж Нархоз можно
+          поступить без ЕНТ. Для части программ важен уровень английского не
+          ниже <strong>B2</strong> и хороший <strong>GPA</strong>, от которого
+          зависят скидки.
+        </p>
+      </div>
+
+      <div class="uni-card">
+        <div class="uni-card-number">3</div>
+        <h3>Международное сотрудничество</h3>
+        <p>
+          Партнёрские университеты в Европе и Азии, программы обмена,
+          двойные дипломы, стажировки за рубежом и широкие возможности
+          академической мобильности для студентов и преподавателей.
+        </p>
+      </div>
+    </section>
+
+    <!-- Углублённый AI-поиск по Нархозу -->
+    <section class="search-block uni-search">
+      <div class="search-label">
+        AI-гид по Narxoz (MVP)
+      </div>
+      <div class="search-row">
+        <input
+          id="narxozQuestion"
+          class="search-input"
+          type="text"
+          placeholder="Спроси AI про Narxoz: программы, гранты, кампус…"
+        />
+        <button class="btn-primary" id="narxozAskBtn">Спросить AI</button>
+      </div>
+      <div class="ai-hint">
+        Сейчас AI отвечает на основе общих знаний. В будущем сюда добавим
+        реальные данные Narxoz University и внутренний DataHub.
+      </div>
+      <div class="ai-result" id="narxozResult"></div>
+    </section>
+  </div>
+
+  <script>
+    const narxozInput = document.getElementById("narxozQuestion");
+    const narxozBtn = document.getElementById("narxozAskBtn");
+    const narxozResult = document.getElementById("narxozResult");
+
+    async function askNarxoz() {
+      const q = (narxozInput.value || "").trim();
+      if (!q) {
+        narxozResult.textContent = "Сначала введи вопрос ";
+        return;
+      }
+
+      narxozResult.textContent = "AI думает...";
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question: q,
+            universityId: "narxoz"
+          })
+        });
+
+        if (!res.ok) {
+          narxozResult.textContent = "Ошибка сервера: " + res.status;
+          return;
+        }
+
+        const data = await res.json();
+        narxozResult.textContent = data.answer || "AI не ответил.";
+      } catch (err) {
+        console.error(err);
+        narxozResult.textContent = "Не удалось связаться с backend.";
+      }
+    }
+
+    narxozBtn.addEventListener("click", askNarxoz);
+    narxozInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") askNarxoz();
+    });
+  </script>
+</body>
+</html>
