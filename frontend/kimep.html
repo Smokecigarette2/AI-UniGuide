@@ -145,7 +145,7 @@
     const kimepBtn = document.getElementById("kimepAskBtn");
     const kimepResult = document.getElementById("kimepResult");
 
-    // твой backend на Render
+    // backend на Render
     const API_BASE = "https://ai-uniguide.onrender.com";
 
     async function askKimep() {
@@ -163,7 +163,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             question: q,
-            universityId: "kimep"   // на бэке пока идёт в общий режим
+            universityId: "kimep"
           })
         });
 
