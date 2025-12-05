@@ -55,8 +55,7 @@
         <button class="btn-primary" id="searchBtn">Спросить AI</button>
       </div>
       <div class="ai-hint">
-        В MVP мы только формируем вопрос и показываем, что отправим на backend.
-        Позже здесь будет реальный ответ от AI-модели в облаке.
+        В этом MVP запрос уходит на backend в облаке и возвращает реальный ответ AI-модели.
       </div>
       <div class="ai-result" id="aiResult"></div>
     </section>
@@ -107,6 +106,9 @@
   </div>
 
   <script>
+    // БАЗОВЫЙ URL бэкенда на Render
+    const API_BASE = "https://ai-uniguide.onrender.com";
+
     // --- ДАННЫЕ ПО ВУЗАМ (пока локальные, без БД) ---
     const universities = [
       {
@@ -214,7 +216,7 @@
       aiResult.textContent = "AI думает...";
 
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/ask", {
+        const res = await fetch(`${API_BASE}/api/ask`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
