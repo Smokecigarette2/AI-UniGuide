@@ -21,7 +21,9 @@
       <div class="hero-card">
         <div>
           <div class="hero-title" id="heroName">KIMEP</div>
-          <div class="hero-meta" id="heroCity">Алматы · частный университет</div>
+          <div class="hero-meta" id="heroCity">
+            Алматы · частный университет · фокус на бизнесе, экономике и международных отношениях
+          </div>
           <div class="hero-desc" id="heroDesc">
             Бизнес, экономика, международные отношения. Программы на английском языке,
             акцент на прикладном образовании.
@@ -29,10 +31,7 @@
         </div>
         <div class="hero-actions">
           <button class="btn-primary" id="openUniBtn">
-            Перейти к вузу (MVP)
-          </button>
-          <button class="btn-ghost" id="compareBtn">
-            Сравнить с другим вузом
+            Перейти к вузу
           </button>
         </div>
       </div>
@@ -43,40 +42,43 @@
     <!-- ПОИСК / AI -->
     <section class="search-block">
       <div class="search-label" id="searchLabel">
-        Спроси AI о выборе вуза или различиях между ними
+        Спроси AI о программах, грантах, кампусе и поступлении в выбранный вуз
       </div>
       <div class="search-row">
         <input
           id="searchInput"
           class="search-input"
           type="text"
-          placeholder="Например: Хочу учиться на IT в Алматы на гранте"
+          placeholder="Например: Какие программы по бизнесу есть в KIMEP?"
         />
         <button class="btn-primary" id="searchBtn">Спросить AI</button>
       </div>
       <div class="ai-hint">
-        В этом MVP запрос уходит на backend в облаке и возвращает реальный ответ AI-модели.
+        Здесь можно задавать любые вопросы про выбранный университет: программы, гранты, кампус, общежитие и т.д.
       </div>
       <div class="ai-result" id="aiResult"></div>
     </section>
 
-    <!-- НИЖНИЙ БЛОК: ПРИВЕТСТВИЕ + НОВОСТИ -->
+        <!-- НИЖНИЙ БЛОК: ПРИВЕТСТВИЕ + НОВОСТИ -->
     <section class="bottom-row">
       <div class="welcome">
         <h2>Приветствуем в DataHub вузов РК!</h2>
         <p>
           AI-UniGuide — это прототип единого каталога университетов Казахстана
-          с интеллектуальным помощником. Наша цель — упростить выбор вуза и
-          программы для абитуриентов и студентов.
+          с интеллектуальным помощником. Наша цель — упростить выбор вуза
+          и образовательной программы для абитуриентов и студентов, а также
+          помочь ориентироваться внутри кампуса (кабинеты, отделы, общежития).
         </p>
         <p>В рамках MVP мы показываем, как может работать:</p>
         <ul>
           <li>каталог вузов с ключевой информацией;</li>
-          <li>AI-поиск по данным о программах и условиях поступления;</li>
-          <li>функция сравнения вузов на основе их характеристик;</li>
-          <li>переход к “странице вуза” с более подробным AI-гидом.</li>
+          <li>AI-поиск по программам, грантам и условиям поступления;</li>
+          <li>поиск кабинетов и сервисов внутри университета на основе базы данных вуза;</li>
+          <li>переход к «странице вуза» с более подробным AI-гидом.</li>
         </ul>
       </div>
+      <!-- дальше оставляешь свой <aside class="news"> как было -->
+
 
       <aside class="news">
         <h2>Новости</h2>
@@ -106,26 +108,26 @@
   </div>
 
   <script>
-    // БАЗОВЫЙ URL бэкенда на Render
-    const API_BASE = "https://ai-uniguide.onrender.com";
+    // Базовый URL backend на Render
+    const BASE_URL = "https://ai-uniguide.onrender.com";
 
     // --- ДАННЫЕ ПО ВУЗАМ (пока локальные, без БД) ---
     const universities = [
       {
         id: "kimep",
         name: "KIMEP",
-        city: "Алматы · частный университет",
+        city: "Алматы · частный университет · фокус на бизнесе, экономике и международных отношениях",
         desc:
           "Бизнес, экономика, международные отношения. Программы на английском языке, акцент на прикладном образовании.",
-        page: "kimep.html"   // сделаешь позже
+        page: "kimep.html"
       },
       {
         id: "narxoz",
-        name: "NARXOZ",
-        city: "Алматы · профильный по финансам и бизнесу",
+        name: "Narxoz University",
+        city: "Алматы · частный университет · основан в 1963 году",
         desc:
           "Экономика, финансы, бухгалтерский учет, государственное управление. Сильный фокус на прикладных кейсах.",
-        page: "narxoz.html"  // наша текущая страница Нархоза
+        page: "narxoz.html"
       }
     ];
 
@@ -136,7 +138,6 @@
     const heroDesc = document.getElementById("heroDesc");
     const prevBtn = document.getElementById("prevUni");
     const nextBtn = document.getElementById("nextUni");
-    const compareBtn = document.getElementById("compareBtn");
     const openUniBtn = document.getElementById("openUniBtn");
 
     const searchInput = document.getElementById("searchInput");
@@ -150,11 +151,7 @@
       heroDesc.textContent = uni.desc;
 
       searchInput.placeholder =
-        "Спроси AI про " +
-        uni.name +
-        " или сравнение с другим вузом (например: чем " +
-        uni.name +
-        " отличается от второго вуза?)";
+        "Спроси AI про программы, гранты или кампус в " + uni.name;
     }
 
     prevBtn.addEventListener("click", () => {
@@ -167,31 +164,13 @@
       renderUni(currentIndex);
     });
 
-    compareBtn.addEventListener("click", async () => {
-      const other =
-        universities.length > 1
-          ? universities[(currentIndex + 1) % universities.length].name
-          : "другим вузом";
-
-      const question =
-        "Сравни, пожалуйста, " +
-        universities[currentIndex].name +
-        " и " +
-        other +
-        " по программам, стоимости и возможностям для студентов.";
-
-      await sendToAI(question);
-    });
-
     // --- ПЕРЕХОД НА СТРАНИЦУ ВУЗА ---
     openUniBtn.addEventListener("click", () => {
       const uni = universities[currentIndex];
 
       if (uni.page) {
-        // Переходим на HTML-страницу конкретного вуза
         window.location.href = uni.page;
       } else {
-        // fallback, если для вуза нет страницы
         aiResult.textContent =
           "Страница вуза " + uni.name + " пока в разработке.";
       }
@@ -216,7 +195,7 @@
       aiResult.textContent = "AI думает...";
 
       try {
-        const res = await fetch(`${API_BASE}/api/ask`, {
+        const res = await fetch(`${BASE_URL}/api/ask`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
